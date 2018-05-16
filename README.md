@@ -1,5 +1,7 @@
 # Commando
 [![Discord](https://discordapp.com/api/guilds/222078108977594368/embed.png)](https://discord.gg/bRCvFy9)
+[![Downloads](https://img.shields.io/npm/dt/discord.js-commando.svg)](https://www.npmjs.com/package/discord.js-commando)
+[![Version](https://img.shields.io/npm/v/discord.js-commando.svg)](https://www.npmjs.com/package/discord.js-commando)
 [![Dependency status](https://david-dm.org/discordjs/Commando.svg)](https://david-dm.org/discordjs/Commando)
 [![Build status](https://travis-ci.org/discordjs/Commando.svg)](https://travis-ci.org/discordjs/Commando)
 
@@ -18,6 +20,7 @@ Additionally, it makes full use of ES2017's `async`/`await` functionality for cl
 		- Basic types (string, integer, float, boolean)
 		- Discord objects (user, member, role, channel, message)
 		- User-defined custom types
+		- Union types
 	* Automatic re-prompting of invalid arguments
 	* Optional arguments with default values
 	* Infinite arguments (arguments that accept as many values as provided)
@@ -26,14 +29,11 @@ Additionally, it makes full use of ES2017's `async`/`await` functionality for cl
 - Command reloading, as well as loading/unloading
 - Command throttling/cooldowns
 - **Custom responses based on a JSON file**
-
-
 ## Installation
-**Node 8.0.0 or newer is required.**  
-`npm install NikoBotDev/discord.js-commando`
+**Node 8.6.0 or newer is required.**  
+`npm install discord.js-commando`
 
 ## Documentation
 [View the docs here.](https://discord.js.org/#/docs/commando)  
 See the [discord.js documentation](https://discord.js.org/#/docs) as well.
-
 ### **Build made especifically for my bots by me, base credits go to [Gawdley](https://github.com/discordjs/Commando/commits?author=Gawdl3y, "Commando creator")**

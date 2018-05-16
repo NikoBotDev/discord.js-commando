@@ -1,5 +1,5 @@
 const discord = require('discord.js');
-const { stripIndents, oneLine } = require('common-tags');
+const { oneLine } = require('common-tags');
 const Command = require('./base');
 const FriendlyError = require('../errors/friendly');
 const CommandFormatError = require('../errors/command-format');
@@ -117,7 +117,7 @@ class CommandMessage {
 		// Obtain the member if we don't have it (ugly-ass if statement ahead)
 		if(this.message.channel.type === 'text' && !this.message.guild.members.has(this.message.author.id) &&
 			!this.message.webhookID) {
-			this.message.member = await this.message.guild.members.fetch(this.message.author);
+			await this.message.guild.members.fetch(this.message.author);
 		}
 
 		// Obtain the member for the ClientUser if it doesn't already exist
@@ -132,15 +132,15 @@ class CommandMessage {
 			 * @event CommandoClient#commandBlocked
 			 * @param {CommandMessage} message - Command message that the command is running from
 			 * @param {string} reason - Reason that the command was blocked
-			 * (built-in reasons are `guildOnly`, `permission`, and `throttling`)
+			 * (built-in reasons are `guildOnly`, `nsfw`, `permission`, and `throttling`)
 			 */
 			this.client.emit('commandBlocked', this, 'guildOnly');
-			return this.reply(this.getKey('cmd-guild-only', this.command.name));
+			return this.replyError(this.getKey('commando.command.guildOnly', this.command.name));
 		}
 
 		if(this.command.nsfw && !this.message.channel.nsfw) {
 			this.client.emit('commandBlocked', this, 'nsfw');
-			return this.reply(this.getKey('cmd-nsfw-only', this.command.name));
+			return this.replyError(this.getKey('commando.command.NSFWOnly', this.command.name));
 		}
 
 		// Ensure the user has permission to use the command
@@ -148,7 +148,7 @@ class CommandMessage {
 		if(!hasPermission || typeof hasPermission === 'string') {
 			this.client.emit('commandBlocked', this, 'permission');
 			if(typeof hasPermission === 'string') return this.reply(hasPermission);
-			else return this.reply(this.getKey('cmd-permissions-error', this.command.name));
+			else return this.replyError('commando.command.permissionsError', this.command.name);
 		}
 
 		// Ensure the client user has the required permissions
@@ -157,14 +157,11 @@ class CommandMessage {
 			if(missing.length > 0) {
 				this.client.emit('commandBlocked', this, 'clientPermissions');
 				if(missing.length === 1) {
-					return this.reply(
-						`I need the "${permissions[missing[0]]}" permission for the \`${this.command.name}\` command to work.`
-					);
+					return this.replyError('commando.command.myPermissions', permissions[missing[0]], this.command.name);
 				}
-				return this.reply(oneLine`
-					I need the following permissions for the \`${this.command.name}\` command to work:
-					${missing.map(perm => permissions[perm]).join(', ')}
-				`);
+				/* eslint-disable max-len */
+				return this.replyError('commando.command.myPermissions.plural', this.command.name, missing.map(perm => permissions[perm]).join(', '));
+				/* eslint-enable max-len */
 			}
 		}
 
@@ -173,9 +170,7 @@ class CommandMessage {
 		if(throttle && throttle.usages + 1 > this.command.throttling.usages) {
 			const remaining = (throttle.start + (this.command.throttling.duration * 1000) - Date.now()) / 1000;
 			this.client.emit('commandBlocked', this, 'throttling');
-			return this.reply(
-				this.getKey('cmd-cooldown', this.command.name, remaining.toFixed(1))
-			);
+			return this.replyError('commando.command.inCooldown', this.command.name, remaining.toFixed(1));
 		}
 
 		// Figure out the command arguments
@@ -191,7 +186,7 @@ class CommandMessage {
 					const err = new CommandFormatError(this);
 					return this.reply(err.message);
 				}
-				return this.reply('Cancelled command.');
+				return this.channel.send(this.getKey('commando.command.cancelled'));
 			}
 			args = result.values;
 		}
@@ -238,7 +233,7 @@ class CommandMessage {
 			if(err instanceof FriendlyError) {
 				return this.reply(err.message);
 			} else {
-				return this.reply(this.getKey('cmd-errored', err.name, err.message));
+				return this.reply(this.getKey('commando.command.errored', err.name, err.message));
 			}
 		}
 	}
