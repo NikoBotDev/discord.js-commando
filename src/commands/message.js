@@ -233,7 +233,9 @@ class CommandMessage {
 			if(err instanceof FriendlyError) {
 				return this.reply(err.message);
 			} else {
-				return this.reply(this.getKey('commando.command.errored', err.name, err.message));
+				if(process.env.NODE_ENV === 'development')
+					return this.reply(this.getKey('commando.command.errored', err.name, err.message));
+				return this.channel.sendError(this.getKey('commando.command.errored'));
 			}
 		}
 	}
