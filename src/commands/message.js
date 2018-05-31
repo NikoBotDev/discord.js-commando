@@ -157,10 +157,10 @@ class CommandMessage {
 			if(missing.length > 0) {
 				this.client.emit('commandBlocked', this, 'clientPermissions');
 				if(missing.length === 1) {
-					return this.replyError('commando.command.myPermissions', permissions[missing[0]], this.command.name);
+					return this.reply(this.guild.getKey('commando.command.myPermissions', permissions[missing[0]], this.command.name));
 				}
 				/* eslint-disable max-len */
-				return this.replyError('commando.command.myPermissions.plural', this.command.name, missing.map(perm => permissions[perm]).join(', '));
+				return this.reply(this.guild.getKey('commando.command.myPermissions.plural', this.command.name, missing.map(perm => permissions[perm]).join(', ')));
 				/* eslint-enable max-len */
 			}
 		}
