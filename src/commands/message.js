@@ -148,7 +148,7 @@ class CommandMessage {
 		if(!hasPermission || typeof hasPermission === 'string') {
 			this.client.emit('commandBlocked', this, 'permission');
 			if(typeof hasPermission === 'string') return this.reply(hasPermission);
-			else return this.replyError('commando.command.permissionsError', this.command.name);
+			else return this.reply(this.guild.getKey('commando.command.permissionsError', this.command.name));
 		}
 
 		// Ensure the client user has the required permissions
@@ -235,7 +235,7 @@ class CommandMessage {
 			} else {
 				if(process.env.NODE_ENV === 'development')
 					return this.reply(this.getKey('commando.command.errored', err.name, err.message));
-				return this.channel.sendError(this.getKey('commando.command.errored'));
+				return this.reply(this.getKey('commando.command.errored'));
 			}
 		}
 	}
