@@ -232,10 +232,6 @@ class CommandMessage {
 			if(this.message.channel.typingCount > typingCount) this.message.channel.stopTyping();
 			if(err instanceof FriendlyError) {
 				return this.reply(err.message);
-			} else {
-				if(process.env.NODE_ENV === 'development')
-					return this.reply(this.getKey('commando.command.errored', err.name, err.message));
-				return this.reply(this.getKey('commando.command.errored'));
 			}
 		}
 	}
