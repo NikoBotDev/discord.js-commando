@@ -117,6 +117,12 @@ class CommandRegistry {
 	 * @see {@link CommandRegistry#registerCommands}
 	 */
 	registerCommand(command) {
+		if(Array.isArray(command)) {
+			for(const com of command) {
+				this.registerCommand(com);
+				return;
+			}
+		}
 		if(typeof command === 'function') command = new command(this.client); // eslint-disable-line new-cap
 		if(!(command instanceof Command)) throw new Error(`Invalid command object to register: ${command}`);
 
