@@ -120,8 +120,8 @@ class CommandRegistry {
 		if(Array.isArray(command)) {
 			for(const com of command) {
 				this.registerCommand(com);
-				return;
 			}
+			return;
 		}
 		if(typeof command === 'function') command = new command(this.client); // eslint-disable-line new-cap
 		if(!(command instanceof Command)) throw new Error(`Invalid command object to register: ${command}`);
@@ -167,7 +167,7 @@ class CommandRegistry {
 	registerCommands(commands, ignoreInvalid = false) {
 		if(!Array.isArray(commands)) throw new TypeError('Commands must be an Array.');
 		for(const command of commands) {
-			if(ignoreInvalid && typeof command !== 'function' && !(command instanceof Command)) {
+			if(ignoreInvalid && typeof command !== 'function' && !(command instanceof Command) && !Array.isArray(command)) {
 				this.client.emit('warn', `Attempting to register an invalid command object: ${command}; skipping.`);
 				continue;
 			}
