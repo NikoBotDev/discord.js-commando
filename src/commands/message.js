@@ -180,7 +180,7 @@ class CommandMessage {
 				return this.reply(this.command.throttling.message);
 			}
 			if(typeof message === 'function') {
-				message = message(this.command.name, remaining.toFixed(1));
+				message = message(remaining.toFixed(1), this.command.name);
 			}
 			if(typeof message !== 'string') {
 				throw new TypeError('Throttling message need to be a string!');
