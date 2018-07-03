@@ -469,5 +469,6 @@ declare module 'discord.js-commando' {
 	type ThrottlingOptions = {
 		usages: number;
 		duration: number;
+		message: Function | string;
 	}
 }

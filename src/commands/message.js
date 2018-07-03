@@ -157,7 +157,9 @@ class CommandMessage {
 			if(missing.length > 0) {
 				this.client.emit('commandBlocked', this, 'clientPermissions');
 				if(missing.length === 1) {
-					return this.reply(this.guild.getKey('commando.command.myPermissions', permissions[missing[0]], this.command.name));
+					return this.reply(
+						this.guild.getKey('commando.command.myPermissions', permissions[missing[0]], this.command.name)
+					);
 				}
 				/* eslint-disable max-len */
 				return this.reply(this.guild.getKey('commando.command.myPermissions.plural', this.command.name, missing.map(perm => permissions[perm]).join(', ')));
@@ -170,7 +172,20 @@ class CommandMessage {
 		if(throttle && throttle.usages + 1 > this.command.throttling.usages) {
 			const remaining = (throttle.start + (this.command.throttling.duration * 1000) - Date.now()) / 1000;
 			this.client.emit('commandBlocked', this, 'throttling');
-			return this.replyError('commando.command.inCooldown', this.command.name, remaining.toFixed(1));
+			let message = this.command.throttling.message;
+			if(!message) {
+				return this.reply(this.getKey('commando.command.inCooldown', this.command.name, remaining.toFixed(1)));
+			}
+			if(message && typeof message === 'string') {
+				return this.reply(this.command.throttling.message);
+			}
+			if(typeof message === 'function') {
+				message = message(this.command.name, remaining.toFixed(1));
+			}
+			if(typeof message !== 'string') {
+				throw new TypeError('Throttling message need to be a string!');
+			}
+			return this.reply(message);
 		}
 
 		// Figure out the command arguments
