@@ -471,5 +471,6 @@ declare module 'discord.js-commando' {
 		usages: number;
 		duration: number;
 		message: Function | string;
+		excludeThrottle: Function;
 	}
 }
