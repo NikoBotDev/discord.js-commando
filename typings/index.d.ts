@@ -410,7 +410,7 @@ declare module 'discord.js-commando' {
 		max?: number;
 		min?: number;
 		oneOf?: any[];
-		default?: any | Function;
+		default?: any;
 		infinite?: boolean;
 		validate?: Function;
 		parse?: Function;
@@ -471,6 +471,6 @@ declare module 'discord.js-commando' {
 		usages: number;
 		duration: number;
 		message: Function | string;
-		excludeThrottle: (msg: CommandMessage) => boolean;
+		exclude: (msg: CommandMessage) => boolean;
 	}
 }

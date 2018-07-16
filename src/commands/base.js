@@ -9,6 +9,8 @@ class Command {
 	 * @typedef {Object} ThrottlingOptions
 	 * @property {number} usages - Maximum number of usages of the command allowed in the time frame.
 	 * @property {number} duration - Amount of time to count the usages of the command within (in seconds).
+	 * @property {Function|string} message - Message that will be send when throttled.
+	 * @property {Function} exclude - Function executed for check if the user will be excluded or not.
 	 */
 
 	/**
