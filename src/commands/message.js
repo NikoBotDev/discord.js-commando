@@ -169,7 +169,7 @@ class CommandMessage {
 
 		// Throttle the command
 		const throttle = this.command.throttle(this.message.author.id);
-		const excludeFunc = this.command.throttling.exclude;
+		const excludeFunc = this.command.throttling? this.command.throttling.exclude : null;
 		if(excludeFunc && typeof excludeFunc !== 'function') {
 			throw new TypeError('Throttle exclusion need to be a function!');
 		}
