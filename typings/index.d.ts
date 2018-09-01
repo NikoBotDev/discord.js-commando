@@ -3,9 +3,15 @@ declare module 'sqlite' {
 	export interface Statement {}
 }
 
+declare module 'better-sqlite3' {
+	export interface Database {}
+	export interface Statement {}
+}
+
 declare module 'discord.js-commando' {
-	import { Channel, Client, ClientOptions, ClientUserSettings, Collection, DMChannel, Emoji, GroupDMChannel, Guild, GuildChannel, GuildMember, GuildResolvable, Message, MessageAttachment, MessageEmbed, MessageMentions, MessageOptions, MessageReaction, PermissionResolvable, PermissionString, ReactionEmoji, Role, Snowflake, StringResolvable, TextChannel, User, UserResolvable, Webhook } from 'discord.js';
+	import { Channel, Client, ClientOptions, Collection, DMChannel, Emoji, GroupDMChannel, Guild, GuildChannel, GuildMember, GuildResolvable, Message, MessageAttachment, MessageEmbed, MessageMentions, MessageOptions, MessageReaction, PermissionResolvable, PermissionString, ReactionEmoji, Role, Snowflake, StringResolvable, TextChannel, User, UserResolvable, Webhook } from 'discord.js';
 	import { Database as SQLiteDatabase, Statement as SQLiteStatement } from 'sqlite';
+	import { Database as SyncSQLiteDatabase, Statement as SyncSQLiteStatement } from 'better-sqlite3';
 
 	export class Argument {
 		private constructor(client: CommandoClient, info: ArgumentInfo);
@@ -241,7 +247,6 @@ declare module 'discord.js-commando' {
 		on(event: 'channelDelete', listener: (channel: Channel) => void): this;
 		on(event: 'channelPinsUpdate', listener: (channel: Channel, time: Date) => void): this;
 		on(event: 'channelUpdate', listener: (oldChannel: Channel, newChannel: Channel) => void): this;
-		on(event: 'clientUserSettingsUpdate', listener: (clientUserSettings: ClientUserSettings) => void): this;
 		on(event: 'debug', listener: (info: string) => void): this;
 		on(event: 'disconnect', listener: (event: any) => void): this;
 		on(event: 'emojiCreate', listener: (emoji: Emoji) => void): this;
@@ -381,6 +386,28 @@ declare module 'discord.js-commando' {
 		private updateOtherShards(key: string, val: any): void;
 	}
 
+	export class SyncSQLiteProvider extends SettingProvider {
+		public constructor(db: SyncSQLiteDatabase);
+
+		public readonly client: CommandoClient;
+		public db: SyncSQLiteDatabase;
+		private deleteStmt: SyncSQLiteStatement;
+		private insertOrReplaceStmt: SyncSQLiteStatement
+		private listeners: Map<any, any>;
+		private settings: Map<any, any>;
+
+		public clear(guild: Guild | string): Promise<void>;
+		public destroy(): Promise<void>;
+		public get(guild: Guild | string, key: string, defVal?: any): any;
+		public init(client: CommandoClient): Promise<void>;
+		public remove(guild: Guild | string, key: string): Promise<any>;
+		public set(guild: Guild | string, key: string, val: any): Promise<any>;
+		private setupGuild(guild: string, settings: {}): void;
+		private setupGuildCommand(guild: CommandoGuild, command: Command, settings: {}): void;
+		private setupGuildGroup(guild: CommandoGuild, group: CommandGroup, settings: {}): void;
+		private updateOtherShards(key: string, val: any): void;
+	}
+
 	export class util {
 		public static disambiguation(items: any[], label: string, property?: string): string;
 		public static paginate<T>(items: T[], page?: number, pageLength?: number): {
@@ -410,7 +437,7 @@ declare module 'discord.js-commando' {
 		max?: number;
 		min?: number;
 		oneOf?: any[];
-		default?: any;
+		default?: any | Function;
 		infinite?: boolean;
 		validate?: Function;
 		parse?: Function;
@@ -454,7 +481,6 @@ declare module 'discord.js-commando' {
 	};
 
 	type CommandoClientOptions = ClientOptions & {
-		selfbot?: boolean;
 		commandPrefix?: string;
 		commandEditableDuration?: number;
 		nonCommandEditable?: boolean;

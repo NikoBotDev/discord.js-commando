@@ -2,7 +2,7 @@ const path = require('path');
 const discord = require('discord.js');
 const Command = require('./commands/base');
 const CommandGroup = require('./commands/group');
-const CommandMessage = require('./commands/message');
+const CommandoMessage = require('./extensions/message');
 const ArgumentType = require('./types/base');
 
 /** Handles registration and searching of commands and groups */
@@ -113,7 +113,7 @@ class CommandRegistry {
 	/**
 	 * Registers a single command
 	 * @param {Command|Function} command - Either a Command instance, or a constructor for one
-	 * @return {CommandRegistry}
+	 * @return {?CommandRegistry}
 	 * @see {@link CommandRegistry#registerCommands}
 	 */
 	registerCommand(command) {
@@ -121,7 +121,7 @@ class CommandRegistry {
 			for(const com of command) {
 				this.registerCommand(com);
 			}
-			return;
+			return null;
 		}
 		if(typeof command === 'function') command = new command(this.client); // eslint-disable-line new-cap
 		if(!(command instanceof Command)) throw new Error(`Invalid command object to register: ${command}`);
@@ -136,7 +136,7 @@ class CommandRegistry {
 			}
 		}
 		const group = this.groups.find(grp => grp.id === command.groupID);
-		if(!group) return;
+		if(!group) return null;
 		if(group.commands.some(cmd => cmd.memberName === command.memberName)) {
 			throw new Error(`A command with the member name "${command.memberName}" is already registered in ${group.id}`);
 		}
@@ -469,7 +469,7 @@ class CommandRegistry {
 		if(!searchString) {
 			return message ?
 				Array.from(this.commands.filter(cmd => cmd.isUsable(message)).values()) :
-				this.commands;
+				Array.from(this.commands);
 		}
 
 		// Find all matches
@@ -493,7 +493,7 @@ class CommandRegistry {
 	 * A CommandResolvable can be:
 	 * * A Command
 	 * * A command name
-	 * * A CommandMessage
+	 * * A CommandoMessage
 	 * @typedef {Command|string} CommandResolvable
 	 */
 
@@ -504,7 +504,7 @@ class CommandRegistry {
 	 */
 	resolveCommand(command) {
 		if(command instanceof Command) return command;
-		if(command instanceof CommandMessage) return command.command;
+		if(command instanceof CommandoMessage && command.command) return command.command;
 		if(typeof command === 'string') {
 			const commands = this.findCommands(command, true);
 			if(commands.length === 1) return commands[0];

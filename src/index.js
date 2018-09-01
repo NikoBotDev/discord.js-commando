@@ -2,9 +2,9 @@ module.exports = {
 	Client: require('./client'),
 	CommandoClient: require('./client'),
 	CommandoGuild: require('./extensions/guild'),
+	CommandoMessage: require('./extensions/message'),
 	Command: require('./commands/base'),
 	CommandGroup: require('./commands/group'),
-	CommandMessage: require('./commands/message'),
 	ArgumentCollector: require('./commands/collector'),
 	Argument: require('./commands/argument'),
 	ArgumentType: require('./types/base'),
@@ -17,6 +17,9 @@ module.exports = {
 	SettingProvider: require('./providers/base'),
 	get SQLiteProvider() {
 		return require('./providers/sqlite');
+	},
+	get SyncSQLiteProvider() {
+		return require('./providers/sqlite-sync');
 	}
 };
 

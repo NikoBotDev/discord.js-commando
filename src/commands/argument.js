@@ -181,8 +181,8 @@ class Argument {
 			prompts.push(await msg.reply(stripIndents`
 				${empty ? this.prompt : valid ? valid : `You provided an invalid ${this.label}. Please try again.`}
 				${oneLine`
-					Respond with \`cancel\` to cancel the command.
-					${wait ? `The command will automatically be cancelled in ${this.wait} seconds.` : ''}
+					Type \`cancel\` to cancel the command.
+					${wait ? `You have ${this.wait} seconds.` : ''}
 				`}
 			`));
 
@@ -270,16 +270,16 @@ class Argument {
 							Please try again.
 						`}
 						${oneLine`
-							Respond with \`cancel\` to cancel the command, or \`finish\` to finish entry up to this point.
-							${wait ? `The command will automatically be cancelled in ${this.wait} seconds.` : ''}
+							Type \`cancel\` to cancel the command, or \`finish\` to finish entry up to this point.
+							${wait ? `You have ${this.wait} seconds.` : ''}
 						`}
 					`));
 				} else if(results.length === 0) {
 					prompts.push(await msg.reply(stripIndents`
 						${this.prompt}
 						${oneLine`
-							Respond with \`cancel\` to cancel the command, or \`finish\` to finish entry.
-							${wait ? `The command will automatically be cancelled in ${this.wait} seconds, unless you respond.` : ''}
+							Type \`cancel\` to cancel the command, or \`finish\` to finish entry.
+							${wait ? `You have ${this.wait} seconds.` : ''}
 						`}
 					`));
 				}
@@ -375,6 +375,7 @@ class Argument {
 	isEmpty(val, msg) {
 		if(this.emptyChecker) return this.emptyChecker(val, msg, this);
 		if(this.type) return this.type.isEmpty(val, msg, this);
+		if(Array.isArray(val)) return val.length === 0;
 		return !val;
 	}
 

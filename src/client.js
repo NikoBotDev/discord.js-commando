@@ -11,7 +11,6 @@ class CommandoClient extends discord.Client {
 	/**
 	 * Options for a CommandoClient
 	 * @typedef {ClientOptions} CommandoClientOptions
-	 * @property {boolean} [selfbot=false] - Whether the command dispatcher should be in selfbot mode
 	 * @property {string} [commandPrefix=!] - Default command prefix
 	 * @property {boolean} [mentionPrefix=false] - Whether to accept client user mention as prefix
 	 * @property {number} [commandEditableDuration=30] - Time in seconds that command messages should be editable
@@ -25,7 +24,6 @@ class CommandoClient extends discord.Client {
 	 * @param {CommandoClientOptions} [options] - Options for the client
 	 */
 	constructor(options = {}) {
-		if(typeof options.selfbot === 'undefined') options.selfbot = false;
 		if(typeof options.commandPrefix === 'undefined') options.commandPrefix = '!';
 		if(typeof options.mentionPrefix === 'undefined') options.mentionPrefix = false;
 		if(options.commandPrefix === null) options.commandPrefix = '';
