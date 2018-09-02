@@ -255,7 +255,7 @@ module.exports = Structures.extend('Message', Message => {
 				 * @param {boolean} fromPattern - Whether the args are pattern matches (see {@link Command#run})
 				 */
 				this.client.emit('commandError', this.command, err, this, args, fromPattern);
-				if(this.message.channel.typingCount > typingCount) this.message.channel.stopTyping();
+				if(this.channel.typingCount > typingCount) this.channel.stopTyping();
 				if(err instanceof FriendlyError) {
 					return this.reply(err.message);
 				}
