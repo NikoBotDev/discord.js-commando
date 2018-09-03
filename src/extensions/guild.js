@@ -24,7 +24,7 @@ module.exports = Structures.extend('Guild', Guild => {
 			 * @type {?string}
 			 * @private
 			 */
-			this._commandPrefix = null;
+			this._commandPrefix = this.settings.get('prefix', this.client.commandPrefix);
 		}
 
 		/**
