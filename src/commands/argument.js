@@ -178,7 +178,8 @@ class Argument {
 				};
 			}
 			if(typeof this.prompt === 'function') {
-				let promptMessage = await this.prompt(msg, this.wait, { empty, valid });
+				let isInvalid = !empty && !valid;
+				let promptMessage = await this.prompt(msg, this.wait, isInvalid);
 				if(!(promptMessage instanceof Message)) {
 					throw new TypeError('Returned value of prompt must be a Message!');
 				}
