@@ -1,7 +1,7 @@
 const { escapeMarkdown } = require('discord.js');
 const { oneLine, stripIndents } = require('common-tags');
 const ArgumentUnionType = require('../types/union');
-
+const { Message } = require('discord.js');
 /** A fancy argument */
 class Argument {
 	/**
@@ -51,8 +51,9 @@ class Argument {
 		this.label = info.label || info.key;
 
 		/**
-		 * Question prompt for the argument
-		 * @type {string}
+		 * Question prompt for the argument.
+		 * If you provide a function, you need to return a Message from it
+		 * @type {string|function}
 		 */
 		this.prompt = info.prompt;
 
@@ -176,16 +177,22 @@ class Argument {
 					answers
 				};
 			}
-
+			if(typeof this.prompt === 'function') {
+				let promptMessage = await this.prompt(msg, this.wait, valid);
+				if(!(promptMessage instanceof Message)) {
+					throw new TypeError('Returned value of prompt must be a Message!');
+				}
+				prompts.push(promptMessage);
+			} else {
 			// Prompt the user for a new value
-			prompts.push(await msg.reply(stripIndents`
+				prompts.push(await msg.reply(stripIndents`
 				${empty ? this.prompt : valid ? valid : `You provided an invalid ${this.label}. Please try again.`}
 				${oneLine`
 					Type \`cancel\` to cancel the command.
 					${wait ? `You have ${this.wait} seconds.` : ''}
 				`}
 			`));
-
+			}
 			// Get the user's response
 			const responses = await msg.channel.awaitMessages(msg2 => msg2.author.id === msg.author.id, {
 				max: 1,
