@@ -33,6 +33,7 @@ declare module 'discord.js-commando' {
 		public type: ArgumentType;
 		public validator: Function;
 		public wait: number;
+		public deletePrompts: boolean;
 
 		public obtain(msg: CommandMessage, val?: string, promptLimit?: number): Promise<ArgumentResult>;
 		public parse(val: string, msg: CommandMessage): any | Promise<any>;

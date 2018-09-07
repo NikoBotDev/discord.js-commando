@@ -24,6 +24,7 @@ class Argument {
 	 * @property {Function} [parse] - Parser function for the argument (see {@link ArgumentType#parse})
 	 * @property {Function} [isEmpty] - Empty checker for the argument (see {@link ArgumentType#isEmpty})
 	 * @property {number} [wait=30] - How long to wait for input (in seconds)
+	 * @property {boolean} [deletePrompts=false] - Whether or not the prompt messages should be deleted
 	 */
 
 	/**
@@ -129,6 +130,12 @@ class Argument {
 		 * @type {number}
 		 */
 		this.wait = typeof info.wait !== 'undefined' ? info.wait : 30;
+
+		/**
+		 * Whether or not the message should be deleted
+		 * @type {boolean}
+		 */
+		this.deletePrompts = typeof info.deletePrompts !== 'undefined' ? info.deletePrompts : false;
 	}
 
 	/**
@@ -177,22 +184,31 @@ class Argument {
 					answers
 				};
 			}
+			let promptMessage;
 			if(typeof this.prompt === 'function') {
 				let isInvalid = !empty && !valid;
-				let promptMessage = await this.prompt(msg, this.wait, isInvalid);
+				promptMessage = await this.prompt(msg, isInvalid, this.wait);
 				if(!(promptMessage instanceof Message)) {
-					throw new TypeError('Returned value of prompt must be a Message!');
+					throw new TypeError('Prompt function must return a Message!');
 				}
+
 				prompts.push(promptMessage);
 			} else {
 			// Prompt the user for a new value
-				prompts.push(await msg.reply(stripIndents`
-				${empty ? this.prompt : valid ? valid : `You provided an invalid ${this.label}. Please try again.`}
-				${oneLine`
-					Type \`cancel\` to cancel the command.
-					${wait ? `You have ${this.wait} seconds.` : ''}
-				`}
-			`));
+				promptMessage = await msg.reply(stripIndents`
+			${empty ? this.prompt : valid ? valid : `You provided an invalid ${this.label}. Please try again.`}
+			${oneLine`
+				Type \`cancel\` to cancel the command.
+				${wait ? `You have ${this.wait} seconds.` : ''}
+			`}
+		`);
+				prompts.push(promptMessage);
+			}
+			if(this.deletePrompts && promptMessage.deletable) {
+				promptMessage.delete()
+					.catch(() => {
+						// Ignored
+					});
 			}
 			// Get the user's response
 			const responses = await msg.channel.awaitMessages(msg2 => msg2.author.id === msg.author.id, {
