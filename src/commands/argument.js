@@ -397,7 +397,7 @@ class Argument {
 		if(typeof info !== 'object') throw new TypeError('Argument info must be an Object.');
 		if(typeof info.key !== 'string') throw new TypeError('Argument key must be a string.');
 		if(info.label && typeof info.label !== 'string') throw new TypeError('Argument label must be a string.');
-		if(['function', 'string'].includes(typeof info.prompt)) throw new TypeError('Argument prompt must be a string.');
+		if(!['function', 'string'].includes(typeof info.prompt)) throw new TypeError('Argument prompt must be a string.');
 		if(info.error && typeof info.error !== 'string') throw new TypeError('Argument error must be a string.');
 		if(info.type && typeof info.type !== 'string') throw new TypeError('Argument type must be a string.');
 		if(info.type && !info.type.includes('|') && !client.registry.types.has(info.type)) {
