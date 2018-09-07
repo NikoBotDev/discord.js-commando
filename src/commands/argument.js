@@ -173,7 +173,7 @@ class Argument {
 		const prompts = [];
 		const answers = [];
 		let valid = !empty ? await this.validate(val, msg) : false;
-
+		let promptMessage;
 		while(!valid || typeof valid === 'string') {
 			/* eslint-disable no-await-in-loop */
 			if(prompts.length >= promptLimit) {
@@ -184,7 +184,7 @@ class Argument {
 					answers
 				};
 			}
-			let promptMessage;
+
 			if(typeof this.prompt === 'function') {
 				let isInvalid = !empty && !valid;
 				promptMessage = await this.prompt(msg, isInvalid, this.wait);
@@ -204,12 +204,7 @@ class Argument {
 		`);
 				prompts.push(promptMessage);
 			}
-			if(this.deletePrompts && promptMessage.deletable) {
-				promptMessage.delete()
-					.catch(() => {
-						// Ignored
-					});
-			}
+
 			// Get the user's response
 			const responses = await msg.channel.awaitMessages(msg2 => msg2.author.id === msg.author.id, {
 				max: 1,
@@ -243,7 +238,12 @@ class Argument {
 			valid = await this.validate(val, msg);
 			/* eslint-enable no-await-in-loop */
 		}
-
+		if(this.deletePrompts && promptMessage.deletable) {
+			promptMessage.delete()
+				.catch(() => {
+					// Ignored
+				});
+		}
 		return {
 			value: await this.parse(val, msg),
 			cancelled: null,
