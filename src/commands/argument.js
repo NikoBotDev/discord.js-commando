@@ -238,7 +238,7 @@ class Argument {
 			valid = await this.validate(val, msg);
 			/* eslint-enable no-await-in-loop */
 		}
-		if(this.deletePrompts && promptMessage.deletable) {
+		if(this.deletePrompts && promptMessage && promptMessage.deletable) {
 			promptMessage.delete()
 				.catch(() => {
 					// Ignored
