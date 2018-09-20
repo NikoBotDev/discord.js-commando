@@ -24,7 +24,7 @@ class Argument {
 	 * @property {Function} [parse] - Parser function for the argument (see {@link ArgumentType#parse})
 	 * @property {Function} [isEmpty] - Empty checker for the argument (see {@link ArgumentType#isEmpty})
 	 * @property {number} [wait=30] - How long to wait for input (in seconds)
-	 * @property {boolean} [deletePrompts=false] - Whether or not the prompt messages should be deleted
+	 * @property {boolean} [deletePrompts=true] - Whether or not the prompt messages should be deleted
 	 */
 
 	/**
@@ -135,7 +135,7 @@ class Argument {
 		 * Whether or not the message should be deleted
 		 * @type {boolean}
 		 */
-		this.deletePrompts = typeof info.deletePrompts !== 'undefined' ? info.deletePrompts : false;
+		this.deletePrompts = typeof info.deletePrompts !== 'undefined' ? info.deletePrompts : true;
 	}
 
 	/**
