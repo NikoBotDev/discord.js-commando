@@ -185,7 +185,7 @@ module.exports = Structures.extend('Message', Message => {
 				this.client.emit('commandBlocked', this, 'throttling');
 				let message = this.command.throttling.message;
 				if(!message) {
-					return this.reply(this.getKey('commando.command.inCooldown', this.command.name, remaining.toFixed(1)));
+					return this.reply(this.getKey('commando.command.inCooldown', remaining.toFixed(1)));
 				}
 				if(message && typeof message === 'string') {
 					return this.reply(this.command.throttling.message);
